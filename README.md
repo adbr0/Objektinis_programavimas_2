@@ -228,3 +228,113 @@ Projektas naudoja automatizuotą `Makefile` surinkimo sistemą su `-O3` vėliav�
     * **1 strategija:** Neefektyviausia - reikalauja 100% papildomos atminties, nes visi studentai dubliuojami naujuose konteineriuose.
     * **2 strategija:** Reikalauja 40–50% papildomos atminties.
     * **3 strategija (`stable_partition`):** Efektyviausia – studentai pertvarkomi tame pačiame vektoriuje, todėl papildomos atminties beveik nereikia.
+
+---
+## [v1.1] Perėjimas prie `class studentas` ir kompiliatoriaus optimizavimo lygių analizė
+
+
+- Studento duomenys perkelti į `private` sritį, o prieiga prie jų užtikrinta per viešus klasės metodus.
+- Klasėje realizuotas destruktorius, kopijavimo konstruktorius bei kopijavimo priskyrimo operatorius.
+- Atliktas palyginamasis eksperimentas tarp senosios `struct` (`v1.0`) ir naujosios `class` (`v1.1`) realizacijų, naudojant **`std::vector`** konteinerį bei tris GCC kompiliatoriaus optimizavimo lygius (**`-O1`**, **`-O2`**, **`-O3`**).
+
+---
+### 1. Vykdomųjų failų (`.exe`) dydžių palyginimas
+
+| Optimizavimo lygis | `struct` (`v1.0`) failo dydis | `class` (`v1.1`) failo dydis | Skirtumas (`class` vs `struct`) |
+| :---: | :---: | :---: | :---: |
+| **`-O1`** | 212 KB | 173 KB | -39 KB |
+| **`-O2`** | 213 KB | 177 KB | -36 KB |
+| **`-O3`** | 215 KB | 170 KB | -45 KB |
+
+---
+### 2. Programos veikimo spartos palyginimas (`std::vector`)
+
+#### 1 000 įrašų 
+| Realizacija ir optimizavimas | Nuskaitymas (s) | Rūšiavimas (s) | Skirstymas į 2 grupes (s) | Išvedimas į failus (s) | **Bendras laikas (s)** |
+| :--- | :---: | :---: | :---: | :---: | :---: |
+| **`struct` (`-O1`)** | 0.0411 | 0.0003 | 0.0003 | 0.0059 | **0.0477** |
+| **`struct` (`-O2`)** | 0.0035 | 0.0004 | 0.0003 | 0.0052 | **0.0094** |
+| **`struct` (`-O3`)** | 0.0035 | 0.0004 | 0.0004 | 0.0046 | **0.0089** |
+| **`class` (`-O1`)** | 0.0028 | 0.0010 | 0.0005 | 0.0050 | **0.0093** |
+| **`class` (`-O2`)** | 0.0036 | 0.0012 | 0.0005 | 0.0060 | **0.0112** |
+| **`class` (`-O3`)** | 0.0047 | 0.0013 | 0.0007 | 0.0076 | **0.0143** |
+
+#### 10 000 įrašų 
+| Realizacija ir optimizavimas | Nuskaitymas (s) | Rūšiavimas (s) | Skirstymas į 2 grupes (s) | Išvedimas į failus (s) | **Bendras laikas (s)** |
+| :--- | :---: | :---: | :---: | :---: | :---: |
+| **`struct` (`-O1`)** | 0.0505 | 0.0038 | 0.0032 | 0.0184 | **0.0759** |
+| **`struct` (`-O2`)** | 0.0209 | 0.0037 | 0.0018 | 0.0176 | **0.0440** |
+| **`struct` (`-O3`)** | 0.0334 | 0.0032 | 0.0018 | 0.0182 | **0.0566** |
+| **`class` (`-O1`)** | 0.0251 | 0.0108 | 0.0031 | 0.0181 | **0.0571** |
+| **`class` (`-O2`)** | 0.0353 | 0.0103 | 0.0032 | 0.0203 | **0.0691** |
+| **`class` (`-O3`)** | 0.0256 | 0.0121 | 0.0044 | 0.0218 | **0.0638** |
+
+#### 100 000 įrašų 
+| Realizacija ir optimizavimas | Nuskaitymas (s) | Rūšiavimas (s) | Skirstymas į 2 grupes (s) | Išvedimas į failus (s) | **Bendras laikas (s)** |
+| :--- | :---: | :---: | :---: | :---: | :---: |
+| **`struct` (`-O1`)** | 0.1580 | 0.0320 | 0.0150 | 0.1444 | **0.3494** |
+| **`struct` (`-O2`)** | 0.1216 | 0.0342 | 0.0158 | 0.1449 | **0.3166** |
+| **`struct` (`-O3`)** | 0.1245 | 0.0373 | 0.0131 | 0.1587 | **0.3337** |
+| **`class` (`-O1`)** | 0.1743 | 0.1329 | 0.0243 | 0.1682 | **0.4998** |
+| **`class` (`-O2`)** | 0.1629 | 0.1252 | 0.0258 | 0.1768 | **0.4908** |
+| **`class` (`-O3`)** | 0.1770 | 0.1214 | 0.0255 | 0.1778 | **0.5018** |
+
+#### 1 000 000 įrašų 
+| Realizacija ir optimizavimas | Nuskaitymas (s) | Rūšiavimas (s) | Skirstymas į 2 grupes (s) | Išvedimas į failus (s) | **Bendras laikas (s)** |
+| :--- | :---: | :---: | :---: | :---: | :---: |
+| **`struct` (`-O1`)** | 1.3309 | 0.4628 | 0.1558 | 1.4359 | **3.3853** |
+| **`struct` (`-O2`)** | 1.2821 | 0.5203 | 0.1744 | 1.4745 | **3.4514** |
+| **`struct` (`-O3`)** | 1.3417 | 0.4891 | 0.1588 | 1.4223 | **3.4119** |
+| **`class` (`-O1`)** | 1.8007 | 1.7129 | 0.3109 | 1.9289 | **5.7534** |
+| **`class` (`-O2`)** | 1.7292 | 1.6447 | 0.2887 | 1.9034 | **5.5660** |
+| **`class` (`-O3`)** | 1.7794 | 1.5126 | 0.2777 | 1.9341 | **5.5038** |
+
+#### 10 000 000 įrašų 
+| Realizacija ir optimizavimas | Nuskaitymas (s) | Rūšiavimas (s) | Skirstymas į 2 grupes (s) | Išvedimas į failus (s) | **Bendras laikas (s)** |
+| :--- | :---: | :---: | :---: | :---: | :---: |
+| **`struct` (`-O1`)** | 13.2460 | 6.1784 | 1.7131 | 14.1073 | **35.2447** |
+| **`struct` (`-O2`)** | 13.3375 | 6.9435 | 1.7312 | 14.5445 | **36.5567** |
+| **`struct` (`-O3`)** | 13.2985 | 6.4089 | 1.5477 | 14.5186 | **35.7737** |
+| **`class` (`-O1`)** | 19.2244 | 23.8377 | 3.3220 | 19.4550 | **65.8391** |
+| **`class` (`-O2`)** | 18.4138 | 23.0355 | 3.1139 | 18.9759 | **63.5391** |
+| **`class` (`-O3`)** | 18.2997 | 20.9376 | 3.0154 | 18.8594 | **61.1121** |
+
+---
+### 3. Testavimo eigos ekrano nuotraukos (`v1.1`):
+
+#### Objektinė realizacija (`class studentas`)
+
+#### Vykdomųjų failų (`class_O*.exe`) dydžiai
+<img width="542" height="53" alt="Screenshot 2026-11-20 191206" src="https://github.com/user-attachments/assets/32195220-2656-4f3d-bf0a-1c752f0089c6" />
+
+#### Optimizavimo lygis `-O1`
+<img width="443" height="368" alt="Screenshot 2026-11-20 191620" src="https://github.com/user-attachments/assets/26df5ef8-50b0-4d2a-bbd5-63e9abb0683c" />
+
+#### Optimizavimo lygis `-O2`
+<img width="449" height="371" alt="Screenshot 2026-11-20 191828" src="https://github.com/user-attachments/assets/0cf10224-1614-4f0b-b3bb-28c4c2ba6992" />
+
+#### Optimizavimo lygis `-O3`
+<img width="454" height="370" alt="Screenshot 2026-11-20 192021" src="https://github.com/user-attachments/assets/9714a2e6-94ee-4902-8ed7-5ba79f47a59f" />
+
+---
+
+#### Struktūrinė realizacija (`struct studentas`)
+
+#### Vykdomųjų failų (`struct_O*.exe`) dydžiai
+<img width="361" height="36" alt="Screenshot 2026-11-20 210004" src="https://github.com/user-attachments/assets/6554c5af-c194-498b-8b95-08bead91ba13" />
+
+#### Optimizavimo lygis `-O1`
+<img width="490" height="374" alt="Screenshot 2026-11-20 205543" src="https://github.com/user-attachments/assets/36cece34-45a3-448a-9ab3-5f317bcc7d46" />
+
+#### Optimizavimo lygis `-O2`
+<img width="479" height="371" alt="Screenshot 2026-11-20 205747" src="https://github.com/user-attachments/assets/f24fa1bd-8235-428d-bdd8-b8ecd3e119c8" />
+
+#### Optimizavimo lygis `-O3`
+<img width="521" height="374" alt="Screenshot 2026-11-20 205857" src="https://github.com/user-attachments/assets/255f534d-82cf-4f1f-ad54-b4b19c8bc4dc" />
+
+---
+### v1.1 Išvados ir analizė:
+
+1. `struct` realizacija visais atvejais veikia sparčiau (pvz., su `1 000 000` įrašų `struct` užtrunka **3.3853–3.4514 s**, o `class` – **5.5038–5.7534 s**)
+2. `class` versijoje aukštesnis optimizavimo lygis pagreitina darbą su didesniais duomenų kiekiais (`1 000 000` įrašų bendras laikas sumažėjo nuo **5.7534 s** su `-O1` iki **5.5038 s** su `-O3`, o su `10 000 000` įrašų – nuo **65.8391 s** iki **61.1121 s**.
+3. Optimizavimo vėliavėlės minimaliai keičia galutinį `.exe` failo dydį (`170–177 KB` klasės atveju ir `212–215 KB` struktūros atveju).
