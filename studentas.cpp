@@ -3,6 +3,63 @@
 #include <numeric>
 #include <sstream>
 
+studentas::studentas(std::istream& is): egzaminas_(0), galutinisv_(0.0), galutinism_(0.0){
+    read_studenta(is);
+}
+
+studentas(const studentas& kitas)
+    : vardas_(kitas.vardas_), pavarde_(kitas.pavarde_),
+    pazymys_(kitas.pazymys_), egzaminas_(kitas.egzaminas_),
+    galutinisv_(kitas.galutinisv_), galutinism_(kitas.galutinism_) {}
+
+studentas& operator=(const studentas& kitas){
+    if(this!=&kitas){
+        vardas_=kitas.vardas_;
+        pavarde_=kitas.pavarde_;
+        pazymys_=kitas.pazymys_;
+        egzaminas_=kitas.egzaminas_;
+        galutinism_=kitas.galutinism_;
+        galutinisv_=kitas.galutinisv_;
+    }
+    return *this;
+
+}
+
+studentas::~studentas(){
+    pazymys_.clear();
+}
+
+std::isstream& studentas::read_studenta(std::istream& is){
+
+    pazymys_.clear();
+    if(!(is>>vardas_>>pavarde_)){return is;}
+
+    std::vector<int> skaiciai;
+    int skaicius;
+    while(is>>skaicius){skaicia.push_back(skaicius);}
+
+    if(skaiciai.size()>=2){
+        egzaminas_ = skaiciai.back();
+        skaiciai.pop_back();
+        pazymys_ = skaiciai;
+        skaiciuoti_galutini();
+    } else {
+        egzaminas_ = 0;
+        galutinisv_ = 0.0;
+        galutinism_ = 0.0;
+    }
+    return is;
+
+}
+
+void studentas::skaiciuoti_galutini(){
+    double v=vidurkis(pazymys_);
+    double m=mediana(pazymys_);
+    galutinisv_ = 0.4*v + 0.6*egzaminas_;
+    galutinism_ = 0.4*m + 0.6*egzaminas_;
+}
+
+
 double vidurkis(const std::vector<int>& pazymiai)
 {
     if(pazymiai.empty()) return 0.0;
