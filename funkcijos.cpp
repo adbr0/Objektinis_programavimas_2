@@ -23,7 +23,7 @@ void nuskaitymas(std::vector<studentas>&grupe, const std::string&pavadinimas)
         if (eilute.empty()) continue;
         std::istringstream iss(eilute);
         studentas A(iss);
-        if (!(A.vardas().empty())) {grupe.push_back(A)};
+        if (!(A.vardas().empty())) {grupe.push_back(A);}
     }
     failas.close();
 
@@ -112,7 +112,7 @@ void generuoti_paz(std::vector<studentas>& grupe)
         }
         A.set_egz(std::rand() % 10 + 1);
 
-        A.apskaiciuoti_galutini();
+        A.skaiciuoti_galutini();
         grupe.push_back(A);
 
         char klausimas;
@@ -184,7 +184,7 @@ void rezultatai(const std::vector<studentas>& grupe)
     for (const auto& B : grupe) {
         std::cout << std::left << std::setw(15) << B.pavarde() << std::setw(15)
                   << B.vardas() << std::fixed << std::setprecision(2)
-                  << std::setw(20) << B.galutinisv << std::setw(20) << B.galutinism << "\n";
+                  << std::setw(20) << B.galutinisv() << std::setw(20) << B.galutinism() << "\n";
     }
 }
 void padalinti_studentai_vector(const std::vector<studentas>& grupe, std::vector<studentas>& vargsiukai, std::vector<studentas>& kietekai)
@@ -334,25 +334,10 @@ void nuskaitymas_list(std::list<studentas>& grupe, const std::string& pavadinima
     while (std::getline(failas, eilute)) {
         if (eilute.empty()) continue;
         std::istringstream iss(eilute);
-        studentas A;
-        if (!(iss >> A.vardas >> A.pavarde)) continue;
-
-        std::vector<int> skaiciai;
-        int skaicius;
-        while (iss >> skaicius) {
-            skaiciai.push_back(skaicius);
-        }
-        if (skaiciai.size() < 2) continue;
-
-        A.egzaminas = skaiciai.back();
-        skaiciai.pop_back();
-        A.pazymys = skaiciai;
-
-        galutinis(A);
-        grupe.push_back(A);
+        studentas A(iss);
+        if (!(A.vardas().empty())) {grupe.push_back(A);}
     }
     failas.close();
-
 }
 
 void padalinti_studentai_list(const std::list<studentas>& grupe, std::list<studentas>& vargsiukai, std::list<studentas>& kietekai)
@@ -362,7 +347,7 @@ void padalinti_studentai_list(const std::list<studentas>& grupe, std::list<stude
     kietekai.clear();
     for(const auto& a:grupe)
     {
-        if(a.galutinisv<5.0){vargsiukai.push_back(a);}
+        if(a.galutinisv()<5.0){vargsiukai.push_back(a);}
         else{kietekai.push_back(a);};
     }
 }
@@ -372,7 +357,7 @@ void padalinti_studentai_list2(std::list<studentas>& grupe, std::list<studentas>
     vargsiukai.clear();
     auto i = grupe.begin();
     while (i != grupe.end()) {
-        if (i->galutinisv < 5.0) {
+        if (i->galutinisv() < 5.0) {
             vargsiukai.push_back(*i);
             i = grupe.erase(i);
         } else {
@@ -384,10 +369,10 @@ void padalinti_studentai_list3(std::list<studentas>& grupe, std::list<studentas>
 {
     vargsiukai.clear();
     std::copy_if(grupe.begin(), grupe.end(), std::back_inserter(vargsiukai), [](const studentas& s) {
-        return s.galutinisv < 5.0;
+        return s.galutinisv() < 5.0;
     });
     grupe.remove_if([](const studentas& s) {
-        return s.galutinisv < 5.0;
+        return s.galutinisv() < 5.0;
     });
 }
 void failo_isv_list(const std::string& pavadinimas, const std::list<studentas>& grupe)
@@ -404,9 +389,9 @@ void failo_isv_list(const std::string& pavadinimas, const std::list<studentas>& 
     failas << "\n";
 
      for (const auto& a : grupe) {
-        failas << std::left << std::setw(15) << a.pavarde << std::setw(15)
-                  << a.vardas << std::fixed << std::setprecision(2)
-                  << std::setw(20) << a.galutinisv << std::setw(20) << a.galutinism << "\n";
+        failas << std::left << std::setw(15) << a.pavarde() << std::setw(15)
+                  << a.vardas() << std::fixed << std::setprecision(2)
+                  << std::setw(20) << a.galutinisv() << std::setw(20) << a.galutinism() << "\n";
     }
     failas.close();
 }
@@ -435,9 +420,7 @@ void sparta_list()
         std::chrono::duration<double> nuskaitymo_trukme=t2-t1;
 
         auto tr_1 = std::chrono::high_resolution_clock::now();
-        grupe.sort([](const studentas& a, const studentas& b) {
-            return a.pavarde < b.pavarde;
-        });
+        grupe.sort(compare_pagal_pavarde);
         auto tr_2 = std::chrono::high_resolution_clock::now();
         std::chrono::duration<double> sort_trukme=tr_2-tr_1;
 
