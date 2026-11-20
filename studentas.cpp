@@ -7,12 +7,12 @@ studentas::studentas(std::istream& is): egzaminas_(0), galutinisv_(0.0), galutin
     read_studenta(is);
 }
 
-studentas(const studentas& kitas)
+studentas::studentas(const studentas& kitas)
     : vardas_(kitas.vardas_), pavarde_(kitas.pavarde_),
     pazymys_(kitas.pazymys_), egzaminas_(kitas.egzaminas_),
     galutinisv_(kitas.galutinisv_), galutinism_(kitas.galutinism_) {}
 
-studentas& operator=(const studentas& kitas){
+studentas& studentas::operator=(const studentas& kitas){
     if(this!=&kitas){
         vardas_=kitas.vardas_;
         pavarde_=kitas.pavarde_;
@@ -29,14 +29,14 @@ studentas::~studentas(){
     pazymys_.clear();
 }
 
-std::isstream& studentas::read_studenta(std::istream& is){
+std::istream& studentas::read_studenta(std::istream& is){
 
     pazymys_.clear();
     if(!(is>>vardas_>>pavarde_)){return is;}
 
     std::vector<int> skaiciai;
     int skaicius;
-    while(is>>skaicius){skaicia.push_back(skaicius);}
+    while(is>>skaicius){skaiciai.push_back(skaicius);}
 
     if(skaiciai.size()>=2){
         egzaminas_ = skaiciai.back();

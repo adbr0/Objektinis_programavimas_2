@@ -86,7 +86,6 @@ int main()
             rezultatai(grupe);
         }
         std::vector<studentas> vargsiukai;
-        std::vector<studentas> kietekai;
         padalinti_studentai_vector3(grupe, vargsiukai);
 
         failo_isv("vargsiukai.txt", vargsiukai);
