@@ -44,7 +44,7 @@ public:
 
 double vidurkis(const std::vector<int>& pazymiai);
 double mediana(std::vector<int> pazymiai);
-bool compare(const studentas& A, const studentas& B);
+bool compare_pagal_varda(const studentas& A, const studentas& B);
 bool compare_pagal_pavarde(const studentas& A, const studentas& B);
 bool compare_pagal_galutini(const studentas& A, const studentas& B);
 #endif // STUDENTAS_H_INCLUDED

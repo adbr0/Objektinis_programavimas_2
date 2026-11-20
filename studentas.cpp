@@ -1,6 +1,7 @@
 #include "studentas.h"
 #include <algorithm>
 #include <numeric>
+#include <sstream>
 
 double vidurkis(const std::vector<int>& pazymiai)
 {
@@ -19,10 +20,15 @@ double mediana(std::vector<int> pazymiai)
      }
      return pazymiai[n/2];
 }
-void galutinis(studentas& a)
+bool compare_pagal_varda(const studentas& A, const studentas& B)
 {
-    double vid = vidurkis(a.pazymys);
-    double med = mediana(a.pazymys);
-    a.galutinisv = 0.4*vid + 0.6*a.egzaminas;
-    a.galutinism = 0.4*med + 0.6*a.egzaminas;
+    return A.vardas()<B.vardas();
+}
+bool compare_pagal_pavarde(const studentas& A, const studentas& B)
+{
+    return A.pavarde()<B.pavarde();
+}
+bool compare_pagal_galutini(const studentas& A, const studentas& B)
+{
+    return A.galutinisv()<B.galutinisv();
 }
