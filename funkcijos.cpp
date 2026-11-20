@@ -22,22 +22,8 @@ void nuskaitymas(std::vector<studentas>&grupe, const std::string&pavadinimas)
     while (std::getline(failas, eilute)) {
         if (eilute.empty()) continue;
         std::istringstream iss(eilute);
-        studentas A;
-        if (!(iss >> A.vardas >> A.pavarde)) continue;
-
-        std::vector<int> skaiciai;
-        int skaicius;
-        while (iss >> skaicius) {
-            skaiciai.push_back(skaicius);
-        }
-        if (skaiciai.size() < 2) continue;
-
-        A.egzaminas = skaiciai.back();
-        skaiciai.pop_back();
-        A.pazymys = skaiciai;
-
-        galutinis(A);
-        grupe.push_back(A);
+        studentas A(iss);
+        if (!(A.vardas().empty())) {grupe.push_back(A)};
     }
     failas.close();
 
