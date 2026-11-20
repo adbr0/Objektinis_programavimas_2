@@ -182,8 +182,8 @@ void rezultatai(const std::vector<studentas>& grupe)
     std::cout << "\n";
 
     for (const auto& B : grupe) {
-        std::cout << std::left << std::setw(15) << B.pavarde << std::setw(15)
-                  << B.vardas << std::fixed << std::setprecision(2)
+        std::cout << std::left << std::setw(15) << B.pavarde() << std::setw(15)
+                  << B.vardas() << std::fixed << std::setprecision(2)
                   << std::setw(20) << B.galutinisv << std::setw(20) << B.galutinism << "\n";
     }
 }
@@ -193,7 +193,7 @@ void padalinti_studentai_vector(const std::vector<studentas>& grupe, std::vector
     kietekai.clear();
     for(const auto& a:grupe)
     {
-        if(a.galutinisv<5.0){vargsiukai.push_back(a);}
+        if(a.galutinisv()<5.0){vargsiukai.push_back(a);}
         else{kietekai.push_back(a);};
     }
 }
@@ -206,7 +206,7 @@ void padalinti_studentai_vector2(std::vector<studentas>& grupe, std::vector<stud
     size_t perziureta = 0;
 
     while (i != grupe.end()) {
-        if (i->galutinisv < 5.0) {
+        if (i->galutinisv() < 5.0) {
             vargsiukai.push_back(*i);
             i = grupe.erase(i);
         } else {
@@ -223,7 +223,7 @@ void padalinti_studentai_vector3(std::vector<studentas>& grupe, std::vector<stud
 {
     vargsiukai.clear();
     auto i = std::stable_partition(grupe.begin(), grupe.end(), [](const studentas& s) {
-        return s.galutinisv < 5.0;
+        return s.galutinisv() < 5.0;
     });
     vargsiukai.assign(grupe.begin(), i);
     grupe.erase(grupe.begin(), i);
@@ -243,9 +243,9 @@ void failo_isv(const std::string& pavadinimas, const std::vector<studentas>& gru
     failas << "\n";
 
      for (const auto& a : grupe) {
-        failas << std::left << std::setw(15) << a.pavarde << std::setw(15)
-                  << a.vardas << std::fixed << std::setprecision(2)
-                  << std::setw(20) << a.galutinisv << std::setw(20) << a.galutinism << "\n";
+        failas << std::left << std::setw(15) << a.pavarde() << std::setw(15)
+                  << a.vardas() << std::fixed << std::setprecision(2)
+                  << std::setw(20) << a.galutinisv() << std::setw(20) << a.galutinism() << "\n";
     }
     failas.close();
 }
@@ -271,9 +271,7 @@ void sparta_vector(){
         std::chrono::duration<double> nuskaitymo_trukme=t2-t1;
 
         auto tr_1 = std::chrono::high_resolution_clock::now();
-        std::sort(grupe.begin(), grupe.end(), [](const studentas& a, const studentas& b) {
-            return a.pavarde < b.pavarde;
-        });
+        std::sort(grupe.begin(), grupe.end(), compare_pagal_pavarde);
         auto tr_2 = std::chrono::high_resolution_clock::now();
         std::chrono::duration<double> sort_trukme=tr_2-tr_1;
 
@@ -310,24 +308,15 @@ void rusiavimas(std::vector<studentas>& grupe, int r_pasirinkimas)
 {
     if (r_pasirinkimas==1)
     {
-        std::sort(grupe.begin(), grupe.end(), [](const studentas&a, const studentas&b)
-        {
-            return a.pavarde<b.pavarde;
-        });
+        std::sort(grupe.begin(), grupe.end(), compare_pagal_pavarde);
     }
      if (r_pasirinkimas==2)
     {
-        std::sort(grupe.begin(), grupe.end(), [](const studentas&a, const studentas&b)
-        {
-            return a.vardas<b.vardas;
-        });
+        std::sort(grupe.begin(), grupe.end(), compare_pagal_varda);
     }
      if (r_pasirinkimas==3)
     {
-        std::sort(grupe.begin(), grupe.end(), [](const studentas&a, const studentas&b)
-        {
-            return a.galutinisv<b.galutinisv;
-        });
+        std::sort(grupe.begin(), grupe.end(), compare_pagal_galutini);
     }
 
 }
