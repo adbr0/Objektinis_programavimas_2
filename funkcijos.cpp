@@ -34,8 +34,11 @@ void ivestis_r(std::vector<studentas>& grupe)
     static std::list<studentas> grupe_list;
     while (true) {
         studentas A;
+        std::string v,p;
         std::cout << "Iveskite per tarpa studento varda ir pavarde: ";
-        std::cin >> A.vardas >> A.pavarde;
+        std::cin >>v>>p;
+        A.set_vardas(v);
+        A.set_pavarde(p);
         std::cin.ignore(1000, '\n');
 
         while (true) {
@@ -49,7 +52,7 @@ void ivestis_r(std::vector<studentas>& grupe)
                 std::cout << "Neteisingas pazymys. Iveskite skaiciu nuo 1 iki 10: ";
                 std::cin >> l;
             }
-            A.pazymys.push_back(l);
+            A.add_pazymys(l);
 
             char klausimas;
             while (true) {
@@ -61,16 +64,18 @@ void ivestis_r(std::vector<studentas>& grupe)
             if (klausimas == 'n' || klausimas == 'N') break;
         }
 
+        int e;
         std::cout << "Iveskite studento egzamino rezultata: ";
-        std::cin >> A.egzaminas;
-        while (std::cin.fail() || A.egzaminas < 1 || A.egzaminas > 10) {
+        std::cin >> e;
+        while (std::cin.fail() || e < 1 || e > 10) {
             std::cin.clear();
             std::cin.ignore(1000, '\n');
             std::cout << "Neteisingas pazymys. Iveskite skaiciu nuo 1 iki 10: ";
-            std::cin >> A.egzaminas;
+            std::cin >> e;
         }
+        A.set_egz(e);
 
-        galutinis(A);
+        A.skaiciuoti_galutini();
         grupe.push_back(A);
         grupe_list.push_back(A);
 
@@ -94,16 +99,20 @@ void generuoti_paz(std::vector<studentas>& grupe)
 {
     while (true) {
         studentas A;
+        std::string v,p;
         std::cout << "Iveskite per tarpa studento varda ir pavarde: ";
-        std::cin >> A.vardas >> A.pavarde;
+        std::cin >> v >> p;
+        A.set_vardas(v);
+        A.set_pavarde(p);
+
         int skaicius = std::rand() % 8 + 3;
 
         for (int i = 0; i < skaicius; i++) {
-            A.pazymys.push_back(std::rand() % 10 + 1);
+            A.add_pazymys(std::rand() % 10 + 1);
         }
-        A.egzaminas = std::rand() % 10 + 1;
+        A.set_egz(std::rand() % 10 + 1);
 
-        galutinis(A);
+        A.apskaiciuoti_galutini();
         grupe.push_back(A);
 
         char klausimas;
